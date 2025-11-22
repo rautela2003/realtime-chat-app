@@ -153,8 +153,20 @@ io.on('connection', (socket) => {
     });
 
     // Typing Indicator
-    socket.on('typing', (username) => {
-        socket.broadcast.emit('typing', username);
+    const typingCooldowns = new Map(); // Store last typing timestamp per socket
+
+    socket.on('typing', ({ room, username }) => {
+        const lastTyping = typingCooldowns.get(socket.id) || 0;
+        const now = Date.now();
+
+        if (now - lastTyping > 300) { // 300ms cooldown
+            typingCooldowns.set(socket.id, now);
+            socket.to(room).emit('typing', username);
+        }
+    });
+
+    socket.on('stopTyping', ({ room, username }) => {
+        socket.to(room).emit('stopTyping', username);
     });
 
     // Disconnect

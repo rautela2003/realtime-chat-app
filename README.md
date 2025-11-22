@@ -8,7 +8,7 @@ A premium real-time chat application built with **React (Vite)**, **Node.js**, *
 - **Premium UI**: Modern dark mode design with glassmorphism and smooth animations.
 - **React Frontend**: Built with Vite for fast performance and component-based architecture.
 - **User Management**: Join with a username and room.
-- **Typing Indicators**: See when others are typing.
+- **Typing Indicators**: Real-time, per-user typing status (e.g., "UserA is typing...").
 - **Message History**: Loads recent messages from MongoDB (with in-memory fallback).
 
 ## Tech Stack

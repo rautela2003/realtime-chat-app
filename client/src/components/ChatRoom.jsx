@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import TypingIndicator from './TypingIndicator';
 
 function ChatRoom({ socket, username, room, onLeave }) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [typing, setTyping] = useState('');
+    const [typingUsers, setTypingUsers] = useState(new Set());
+    const typingTimeoutRef = useRef(null);
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -14,8 +16,19 @@ function ChatRoom({ socket, username, room, onLeave }) {
 
         // Listen for typing indicators
         socket.on('typing', (user) => {
-            setTyping(`${user} is typing...`);
-            setTimeout(() => setTyping(''), 3000);
+            setTypingUsers((prev) => {
+                const newSet = new Set(prev);
+                newSet.add(user);
+                return newSet;
+            });
+        });
+
+        socket.on('stopTyping', (user) => {
+            setTypingUsers((prev) => {
+                const newSet = new Set(prev);
+                newSet.delete(user);
+                return newSet;
+            });
         });
 
         // Load initial history (if available via API, or just start empty/from socket)
@@ -30,6 +43,7 @@ function ChatRoom({ socket, username, room, onLeave }) {
         return () => {
             socket.off('message');
             socket.off('typing');
+            socket.off('stopTyping');
         };
     }, [socket]);
 
@@ -42,9 +56,7 @@ function ChatRoom({ socket, username, room, onLeave }) {
         if (newMessage.trim()) {
             // Emit to server
             socket.emit('chatMessage', { username, text: newMessage, room });
-
-            // Optimistically add to UI (optional, but server broadcasts back usually)
-            // We'll wait for server broadcast to avoid duplicates if logic is simple
+            socket.emit('stopTyping', { username, room }); // Stop typing when sent
 
             setNewMessage('');
         }
@@ -52,7 +64,19 @@ function ChatRoom({ socket, username, room, onLeave }) {
 
     const handleTyping = (e) => {
         setNewMessage(e.target.value);
-        socket.emit('typing', username);
+
+        // Emit typing
+        socket.emit('typing', { username, room });
+
+        // Clear existing timeout
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        // Set new timeout to stop typing
+        typingTimeoutRef.current = setTimeout(() => {
+            socket.emit('stopTyping', { username, room });
+        }, 1500);
     };
 
     return (
@@ -81,7 +105,7 @@ function ChatRoom({ socket, username, room, onLeave }) {
                 <div ref={messagesEndRef} />
             </div>
 
-            <div className="typing-indicator">{typing}</div>
+            <TypingIndicator typingUsers={Array.from(typingUsers)} />
 
             <form className="chat-input-area" onSubmit={handleSend}>
                 <input
