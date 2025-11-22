@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Login Modal -->
+    <div id="login-screen">
+        <div class="login-container">
+            <h2>Join Chat</h2>
+            <input type="text" id="username-input" placeholder="Enter your username..." autocomplete="off">
+            <button id="join-btn">Join</button>
+        </div>
+    </div>
+
+    <!-- Chat Container -->
+    <div id="chat-container" class="hidden">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-comments"></i> Chat App</h3>
+            </div>
+            <div class="users-list-container">
+                <h4><i class="fas fa-users"></i> Online Users</h4>
+                <ul id="users-list">
+                    <!-- Users will be added here -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="chat-info">
+                    <h3>General Room</h3>
+                    <span id="connection-status" class="status connected">Connected</span>
+                </div>
+            </div>
+            
+            <div id="messages" class="chat-messages">
+                <!-- Messages will appear here -->
+            </div>
+
+            <div class="typing-indicator" id="typing-indicator">
+                <!-- Typing text goes here -->
+            </div>
+
+            <div class="chat-input-area">
+                <form id="chat-form">
+                    <input type="text" id="msg-input" placeholder="Type a message..." autocomplete="off" required>
+                    <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
