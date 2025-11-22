@@ -1,66 +1,77 @@
 # Real-Time Chat Application
 
-A real-time chat application built with Node.js, Express, Socket.io, and MongoDB.
+A premium real-time chat application built with **React (Vite)**, **Node.js**, **Socket.io**, and **MongoDB**.
 
 ## Features
 
-- **Real-time Messaging**: Send and receive messages instantly using Socket.io.
-- **User Management**: Join with a username, see online users, and get notified when users join/leave.
-- **Typing Indicators**: See when other users are typing.
-- **Message History**: Loads the last 50 messages from MongoDB upon joining.
-- **Responsive UI**: Clean, WhatsApp-inspired interface.
+- **Real-time Messaging**: Instant communication powered by Socket.io.
+- **Premium UI**: Modern dark mode design with glassmorphism and smooth animations.
+- **React Frontend**: Built with Vite for fast performance and component-based architecture.
+- **User Management**: Join with a username and room.
+- **Typing Indicators**: See when others are typing.
+- **Message History**: Loads recent messages from MongoDB (with in-memory fallback).
 
 ## Tech Stack
 
+- **Frontend**: React, Vite, CSS3 (Glassmorphism)
 - **Backend**: Node.js, Express.js
-- **Real-time Engine**: Socket.io
+- **Real-time**: Socket.io
 - **Database**: MongoDB (Mongoose)
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
 
 ## Prerequisites
 
 - Node.js installed
-- MongoDB installed and running (default: `mongodb://localhost:27017/chat-app`)
+- MongoDB installed (optional - app falls back to in-memory storage if DB is missing)
 
 ## Installation
 
-1.  Clone the repository (or download the source).
-2.  Navigate to the project directory:
+1.  **Clone the repository**:
     ```bash
+    git clone https://github.com/YOUR_USERNAME/realtime-chat-app.git
     cd realtime-chat-app
     ```
-3.  Install dependencies:
+
+2.  **Install Backend Dependencies**:
     ```bash
     npm install
     ```
-4.  Create a `.env` file (optional, defaults provided in code):
-    ```
-    PORT=3000
-    MONGO_URI=mongodb://localhost:27017/chat-app
+
+3.  **Install Frontend Dependencies**:
+    ```bash
+    cd client
+    npm install
     ```
 
 ## Running the Application
 
-1.  Start the server:
-    ```bash
-    npm start
-    ```
-    Or for development with auto-restart:
-    ```bash
-    npm run dev
-    ```
+You need to run both the backend (server) and frontend (client).
 
-2.  Open your browser and visit: `http://localhost:3000`
+### 1. Start the Backend
+From the root directory:
+```bash
+npm start
+```
+*Server runs on port 3000.*
 
-3.  Open multiple tabs to simulate different users.
+### 2. Start the Frontend
+Open a new terminal, navigate to `client`, and run:
+```bash
+cd client
+npm run dev
+```
+*Client runs on http://localhost:5173.*
 
-## API Endpoints
+## Usage
 
-- `GET /messages/latest`: Returns the last 50 messages.
-- `POST /messages`: Save a new message (JSON body: `{ "username": "...", "text": "...", "room": "..." }`).
+1.  Open `http://localhost:5173` in your browser.
+2.  Enter a username and room name (e.g., "General").
+3.  Click **Join Room**.
+4.  Start chatting! Open multiple tabs to simulate different users.
 
 ## Project Structure
 
-- `server.js`: Main server file (Express + Socket.io setup).
-- `models/`: MongoDB schemas (User, Message).
-- `public/`: Frontend assets (HTML, CSS, JS).
+- `server.js`: Backend server (Express + Socket.io).
+- `client/`: React frontend application.
+  - `src/components/`: React components (ChatRoom, JoinScreen).
+  - `src/index.css`: Global styles and themes.
+- `models/`: MongoDB schemas.

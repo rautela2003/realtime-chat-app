@@ -24,3 +24,11 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
+    
+    - name: Install Client Dependencies
+      working-directory: ./client
+      run: npm ci
+      
+    - name: Build Client
+      working-directory: ./client
+      run: npm run build
