@@ -17,6 +17,14 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+transporter.verify((error, success) => {
+    if (error) {
+        console.log("Error:", error);
+    } else {
+        console.log("Success! Ready to send email.");
+    }
+});
+
 // Helper to send email (mock implementation for now if creds fail, or just console log)
 const sendEmail = async (email, otp) => {
     console.log(`[EMAIL MOCK] To: ${email}, OTP: ${otp}`);
