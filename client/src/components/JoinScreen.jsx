@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-function JoinScreen({ onJoin }) {
-    const [username, setUsername] = useState('');
+function JoinScreen({ onJoin, username: initialUsername }) {
+    const [username, setUsername] = useState(initialUsername || '');
     const [room, setRoom] = useState('General');
 
     const handleSubmit = (e) => {
@@ -23,6 +23,8 @@ function JoinScreen({ onJoin }) {
                         placeholder="Enter your username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        readOnly={!!initialUsername}
+                        style={initialUsername ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
                         required
                     />
                 </div>

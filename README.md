@@ -42,6 +42,12 @@ A premium real-time chat application built with **React (Vite)**, **Node.js**, *
     npm install
     ```
 
+### 3. Email OTP Authentication
+- **Secure Login**: Users must verify their email to access the chat.
+- **Development Mode**: Since a real SMTP server is not configured, **OTPs are logged to the server terminal**.
+    - Look for: `[EMAIL MOCK] To: user@example.com, OTP: 123456`
+- **Security**: OTPs are hashed (bcrypt) and expire in 5 minutes.
+
 ## Running the Application
 
 You need to run both the backend (server) and frontend (client).

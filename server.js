@@ -8,6 +8,8 @@ const path = require('path');
 
 const Message = require('./models/Message');
 const User = require('./models/User');
+const authRoutes = require('./routes/auth');
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 
@@ -23,7 +25,12 @@ const io = socketIo(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cors());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Auth Routes
+app.use('/auth', authRoutes);
 
 // MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/chat-app';
@@ -37,6 +44,12 @@ mongoose.connect(MONGO_URI, {
         isMongoConnected = true;
     })
     .catch(err => console.error('MongoDB connection error:', err));
+
+// Middleware to pass DB status
+app.use((req, res, next) => {
+    req.isMongoConnected = isMongoConnected;
+    next();
+});
 
 // In-memory user store for active sockets (faster than DB for just online list)
 // But we will also try to sync with DB if needed. For this starter, we'll use an object for quick lookups.
@@ -85,9 +98,25 @@ app.post('/messages', async (req, res) => {
     }
 });
 
+// Socket.io Middleware for Auth
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+        return next(new Error("Authentication error: Token required"));
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key_change_me');
+        socket.user = decoded;
+        next();
+    } catch (err) {
+        return next(new Error("Authentication error: Invalid token"));
+    }
+});
+
 // Socket.io Events
 io.on('connection', (socket) => {
-    console.log('New client connected:', socket.id);
+    console.log('New client connected:', socket.id, 'User:', socket.user.username);
 
     // Join Room / User Login
     socket.on('joinRoom', async ({ username }) => {
@@ -96,8 +125,9 @@ io.on('connection', (socket) => {
         // Optional: Save/Update user in DB
         if (isMongoConnected) {
             try {
+                // Use email from token to identify user securely
                 await User.findOneAndUpdate(
-                    { username },
+                    { email: socket.user.email },
                     { socketId: socket.id, online: true },
                     { upsert: true, new: true }
                 );
@@ -186,7 +216,7 @@ io.on('connection', (socket) => {
             // Update DB
             if (isMongoConnected) {
                 try {
-                    await User.findOneAndUpdate({ username }, { online: false });
+                    await User.findOneAndUpdate({ email: socket.user.email }, { online: false });
                 } catch (err) {
                     console.error("Error updating user offline:", err);
                 }
