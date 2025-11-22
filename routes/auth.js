@@ -9,11 +9,11 @@ const User = require('../models/User');
 // Nodemailer Transporter (Ethereal for testing)
 // In production, use real SMTP credentials
 const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
+    service: 'gmail',
     port: 587,
     auth: {
-        user: 'ethereal.user@ethereal.email', // Replace with real/test creds if needed
-        pass: 'ethereal.pass'
+        user: 'ss2369666@gmail.com', // Replace with real/test creds if needed
+        pass: 'dhbw epuv ivhe wmwr'
     }
 });
 
