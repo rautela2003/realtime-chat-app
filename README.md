@@ -44,9 +44,27 @@ A premium real-time chat application built with **React (Vite)**, **Node.js**, *
 
 ### 3. Email OTP Authentication
 - **Secure Login**: Users must verify their email to access the chat.
-- **Development Mode**: Since a real SMTP server is not configured, **OTPs are logged to the server terminal**.
+- **Resend OTP**: Includes a "Resend OTP" button with a 30-second cooldown.
+- **Development Mode**: By default, **OTPs are logged to the server terminal**.
     - Look for: `[EMAIL MOCK] To: user@example.com, OTP: 123456`
+- **Real Emails**: To send real emails via Gmail:
+    1. Create a `.env` file (see `.env.example`).
+    2. Add `EMAIL_USER` (your email) and `EMAIL_PASS` (your 16-char App Password).
 - **Security**: OTPs are hashed (bcrypt) and expire in 5 minutes.
+- **Resilience**: Includes an **in-memory fallback** for Auth, allowing the app to function fully even without a local MongoDB connection.
+
+## Configuration
+
+Create a `.env` file in the root directory to configure the server:
+
+```env
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/chat-app
+JWT_SECRET=your_secure_secret_key
+# Optional: For Real Emails
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-16-char-app-password
+```
 
 ## Running the Application
 

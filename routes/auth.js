@@ -6,38 +6,55 @@ const nodemailer = require('nodemailer');
 const Otp = require('../models/Otp');
 const User = require('../models/User');
 
-// Nodemailer Transporter (Ethereal for testing)
-// In production, use real SMTP credentials
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    port: 587,
-    auth: {
-        user: 'ss2369666@gmail.com', // Replace with real/test creds if needed
-        pass: 'dhbw epuv ivhe wmwr'
-    }
-});
+// Nodemailer Transporter
+// Uses environment variables if provided, otherwise falls back to Ethereal (mock)
+let transporter;
+
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    transporter = nodemailer.createTransport({
+        service: 'gmail', // Easy setup for Gmail
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+} else {
+    transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: {
+            user: 'ethereal.user@ethereal.email',
+            pass: 'ethereal.pass'
+        }
+    });
+}
 
 transporter.verify((error, success) => {
     if (error) {
-        console.log("Error:", error);
+        console.error("Transporter verification failed:", error);
     } else {
         console.log("Success! Ready to send email.");
     }
 });
 
-// Helper to send email (mock implementation for now if creds fail, or just console log)
+// Helper to send email
 const sendEmail = async (email, otp) => {
+    // Always log for dev convenience
     console.log(`[EMAIL MOCK] To: ${email}, OTP: ${otp}`);
-    // try {
-    //     await transporter.sendMail({
-    //         from: '"Chat App" <no-reply@chatapp.com>',
-    //         to: email,
-    //         subject: 'Your Login OTP',
-    //         text: `Your login OTP is: ${otp} (valid for 5 minutes)`
-    //     });
-    // } catch (err) {
-    //     console.error("Email send failed:", err);
-    // }
+
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        try {
+            await transporter.sendMail({
+                from: `"Chat App" <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: 'Your Login OTP',
+                text: `Your login OTP is: ${otp} (valid for 5 minutes)`
+            });
+            console.log(`[EMAIL SENT] To: ${email}`);
+        } catch (err) {
+            console.error("Email send failed:", err);
+        }
+    }
 };
 
 // In-memory fallback stores
