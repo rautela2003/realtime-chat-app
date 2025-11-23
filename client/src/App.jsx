@@ -3,7 +3,6 @@ import io from 'socket.io-client';
 import AuthScreen from './components/AuthScreen';
 import JoinScreen from './components/JoinScreen';
 import ChatRoom from './components/ChatRoom';
-import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 // Socket instance (initially disconnected)
 const socket = io('http://localhost:3000', { autoConnect: false });
