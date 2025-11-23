@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 function AuthScreen({ onLogin }) {
     const [step, setStep] = useState(1); // 1: Email, 2: OTP
